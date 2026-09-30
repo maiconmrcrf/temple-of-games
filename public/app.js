@@ -110,6 +110,16 @@ async function abrirApp() {
     document.getElementById("sbSaldo").textContent  = BRL(u.saldo || 0);
     document.getElementById("sbNome").textContent   = u.nome;
     document.getElementById("sbEmail").textContent  = u.email;
+
+    // Esconde a promo se o usuário já depositou alguma vez
+    var promo = document.getElementById("promoLocked");
+    if (promo) {
+      var temDeposito = (u.historico || []).some(function(h){
+        return h.tipo && h.tipo.indexOf("Dep") === 0;
+      });
+      promo.style.display = temDeposito ? "none" : "block";
+    }
+
     mostrarView("view-app");
   } catch { clearSession(); mostrarView("view-splash"); }
 }

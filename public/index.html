@@ -81,6 +81,15 @@
       <span class="saldo-label">Saldo disponível</span>
       <span class="saldo-valor" id="saldoApp">R$ 0,00</span>
     </div>
+    <div class="promo-locked" id="promoLocked">
+      <div class="promo-top">
+        <span class="promo-badge">🎁 PROMOÇÃO</span>
+        <span class="promo-lock">🔒 BLOQUEADO</span>
+      </div>
+      <div class="promo-value">R$ 5,00</div>
+      <div class="promo-desc">Faça seu primeiro depósito para liberar esse valor junto ao seu saldo</div>
+    </div>
+    
     <div class="saldo-acoes">
       <button class="btn-dep" onclick="abrirDeposito()"><i class="fas fa-plus"></i> Depositar</button>
       <button class="btn-saq" onclick="abrirSaque()"><i class="fas fa-money-bill-transfer"></i> Sacar</button>
@@ -104,7 +113,6 @@
     <a onclick="abrirDeposito()"><i class="fas fa-circle-plus"></i> Depositar</a>
     <a onclick="abrirSaque()"><i class="fas fa-money-bill-transfer"></i> Sacar</a>
     <a onclick="abrirHistorico()"><i class="fas fa-clock-rotate-left"></i> Histórico</a>
-    <a onclick="abrirLinks()"><i class="fas fa-link"></i> Links Úteis</a>
     <a onclick="abrirSuporte()"><i class="fas fa-headset"></i> Suporte</a>
     <a class="sb-sair" onclick="sair()"><i class="fas fa-right-from-bracket"></i> Sair</a>
   </nav>
