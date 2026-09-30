@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+<meta name="theme-color" content="#000000" />
+<title>Temple of Games</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏛️</text></svg>">
+<link rel="stylesheet" href="style.css" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+
+<section class="view ativo" id="view-splash">
+  <div class="splash-box">
+    <div class="splash-logo">
+      <span class="temple-icon" id="splashLogo">🏛️</span>
+      <h1 id="splashNome">TEMPLE<span>OF GAMES</span></h1>
+      <p class="splash-sub">A sua arena de jogos online</p>
+    </div>
+    <div class="splash-botoes">
+      <button class="btn-gold" onclick="mostrarView('view-login')">Entrar</button>
+      <button class="btn-ghost" onclick="mostrarView('view-cadastro')">Criar Conta</button>
+    </div>
+    <p class="aviso-mini">🔒 Ambiente seguro. Demonstração educacional.</p>
+  </div>
+</section>
+
+<section class="view" id="view-login">
+  <div class="auth-box">
+    <button class="voltar" onclick="mostrarView('view-splash')"><i class="fas fa-arrow-left"></i></button>
+    <div class="auth-logo" id="loginLogo">🏛️</div>
+    <h2>Entrar</h2>
+    <p class="auth-sub">Acesse sua conta</p>
+    <form onsubmit="fazerLogin(event)">
+      <label>E-mail</label>
+      <input type="email" id="loginEmail" placeholder="seu@email.com" required />
+      <label>Senha</label>
+      <input type="password" id="loginSenha" placeholder="••••••••" required />
+      <button type="submit" class="btn-gold">Entrar</button>
+    </form>
+    <div class="auth-msg" id="msgLogin"></div>
+    <p class="auth-troca">Não tem conta? <a onclick="mostrarView('view-cadastro')">Cadastre-se</a></p>
+  </div>
+</section>
+
+<section class="view" id="view-cadastro">
+  <div class="auth-box">
+    <button class="voltar" onclick="mostrarView('view-splash')"><i class="fas fa-arrow-left"></i></button>
+    <div class="auth-logo" id="cadLogo">🏛️</div>
+    <h2>Criar Conta</h2>
+    <p class="auth-sub">Preencha seus dados</p>
+    <form onsubmit="fazerCadastro(event)">
+      <label>Nome completo</label>
+      <input type="text" id="cadNome" placeholder="João da Silva" required />
+      <label>Data de nascimento</label>
+      <input type="date" id="cadNasc" required />
+      <label>CPF</label>
+      <input type="text" id="cadCpf" placeholder="000.000.000-00" maxlength="14" oninput="mascaraCPF(this)" required />
+      <label>E-mail</label>
+      <input type="email" id="cadEmail" placeholder="seu@email.com" required />
+      <label>Senha (mín. 6 caracteres)</label>
+      <input type="password" id="cadSenha" placeholder="••••••••" minlength="6" required />
+      <label>Confirmar senha</label>
+      <input type="password" id="cadSenha2" placeholder="••••••••" minlength="6" required />
+      <button type="submit" class="btn-gold">Criar Conta</button>
+    </form>
+    <div class="auth-msg" id="msgCadastro"></div>
+    <p class="auth-troca">Já tem conta? <a onclick="mostrarView('view-login')">Entrar</a></p>
+  </div>
+</section>
+
+<section class="view" id="view-app">
+  <header class="topbar">
+    <div class="menu-icon" onclick="abrirMenu()"><i class="fas fa-bars"></i></div>
+    <div class="logo" id="topLogo">TEMPLE <span class="logo-icon">🏛️</span> OF GAMES</div>
+    <div class="user-icon" onclick="abrirMenu()"><i class="fas fa-user"></i></div>
+  </header>
+  <div class="saldo-bar">
+    <div class="saldo-info">
+      <span class="saldo-label">Saldo disponível</span>
+      <span class="saldo-valor" id="saldoApp">R$ 0,00</span>
+    </div>
+    <div class="saldo-acoes">
+      <button class="btn-dep" onclick="abrirDeposito()"><i class="fas fa-plus"></i> Depositar</button>
+      <button class="btn-saq" onclick="abrirSaque()"><i class="fas fa-money-bill-transfer"></i> Sacar</button>
+    </div>
+  </div>
+  <div class="banner" id="bannerApp">ONLINE CASINO GAMES</div>
+  <main class="game-grid" id="gameGrid"></main>
+  <footer class="foot-app"><p>© <span id="footNome">Temple of Games</span></p></footer>
+</section>
+
+<div class="overlay" id="overlay" onclick="fecharMenu()"></div>
+<aside class="sidebar" id="sidebar">
+  <div class="sb-header">
+    <div class="sb-avatar"><i class="fas fa-user"></i></div>
+    <div class="sb-info"><strong id="sbNome">—</strong><small id="sbEmail">—</small></div>
+  </div>
+  <div class="sb-saldo"><span>Saldo</span><strong id="sbSaldo">R$ 0,00</strong></div>
+  <nav class="sb-menu">
+    <a onclick="fecharMenu()"><i class="fas fa-house"></i> Início</a>
+    <a onclick="abrirPerfil()"><i class="fas fa-id-card"></i> Meu Perfil</a>
+    <a onclick="abrirDeposito()"><i class="fas fa-circle-plus"></i> Depositar</a>
+    <a onclick="abrirSaque()"><i class="fas fa-money-bill-transfer"></i> Sacar</a>
+    <a onclick="abrirHistorico()"><i class="fas fa-clock-rotate-left"></i> Histórico</a>
+    <a onclick="abrirLinks()"><i class="fas fa-link"></i> Links Úteis</a>
+    <a onclick="abrirSuporte()"><i class="fas fa-headset"></i> Suporte</a>
+    <a class="sb-sair" onclick="sair()"><i class="fas fa-right-from-bracket"></i> Sair</a>
+  </nav>
+  <div class="sb-footer"><small>Temple of Games v4.0</small></div>
+</aside>
+
+<div class="modal" id="modal">
+  <div class="modal-box">
+    <button class="modal-close" onclick="fecharModal()">×</button>
+    <h3 id="modalTitulo">Título</h3>
+    <div id="modalCorpo"></div>
+  </div>
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>
