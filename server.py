@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """Temple of Games — Flask + Asaas PIX + Admin.
-O token é lido da variável de ambiente ASAAS_API_KEY."""
+O token vem da variável de ambiente ASAAS_API_KEY configurada no Render."""
 
 import os, json
 from datetime import datetime
@@ -10,15 +10,16 @@ from flask import Flask, request, jsonify, send_from_directory
 
 app = Flask(__name__, static_folder="public", static_url_path="")
 
-# Token APENAS da variável de ambiente (configurada no Render)
-ACCESS_TOKEN = os.environ.get("ASAAS_API_KEY", "")
+ACCESS_TOKEN = os.environ.get("ASAAS_API_KEY", "").strip()
 
 if ACCESS_TOKEN and "_prod_" in ACCESS_TOKEN:
     BASE_URL, AMBIENTE = "https://api.asaas.com", "PRODUÇÃO"
-elif ACCESS_TOKEN:
+elif ACCESS_TOKEN and "_sandbox_" in ACCESS_TOKEN:
     BASE_URL, AMBIENTE = "https://api-sandbox.asaas.com", "SANDBOX"
+elif ACCESS_TOKEN:
+    BASE_URL, AMBIENTE = "https://api.asaas.com", "PRODUÇÃO"
 else:
-    BASE_URL, AMBIENTE = "https://api.asaas.com", "NÃO CONFIGURADO"
+    BASE_URL, AMBIENTE = "https://api.asaas.com", "SEM TOKEN"
 
 HEADERS = {"access_token": ACCESS_TOKEN, "Content-Type": "application/json"}
 VALOR_MINIMO = 5.00
@@ -30,11 +31,9 @@ PIX_FILE    = os.path.join(BASE_DIR, "pix_pendentes.json")
 CONFIG_FILE = os.path.join(BASE_DIR, "config.json")
 
 CONFIG_PADRAO = {
-    "empresa": {
-        "nome": "Temple of Games",
-        "descricao_pix": "Temple of Games - Créditos",
-        "logo_emoji": "🏛️"
-    },
+    "empresa": {"nome": "Temple of Games",
+                "descricao_pix": "Temple of Games - Créditos",
+                "logo_emoji": "🏛️"},
     "banner": "ONLINE CASINO GAMES",
     "cores": {"dourado": "#d4af37", "dourado_claro": "#f0c040"},
     "jogos": [
@@ -163,23 +162,17 @@ def historico_usuario(email):
 @app.route("/api/testar-token")
 def testar_token():
     if not ACCESS_TOKEN:
-        return jsonify({"ok": False, "erro": "Token nao configurado."})
+        return jsonify({"ok": False, "erro": "Token não configurado. Defina ASAAS_API_KEY no Render."})
     try:
         r = requests.get(f"{BASE_URL}/v3/customers?limit=1", headers=HEADERS, timeout=15)
-        inicio_hex = ACCESS_TOKEN[:8].encode("utf-8").hex()
-        return jsonify({
-            "ok": r.status_code == 200,
-            "status_code": r.status_code,
-            "ambiente": AMBIENTE,
-            "base_url": BASE_URL,
-            "token_prefixo": ACCESS_TOKEN[:30] + "...",
-            "token_tamanho": len(ACCESS_TOKEN),
-            "token_primeiros_hex": inicio_hex,
-            "token_repr": repr(ACCESS_TOKEN[:40]),
-            "resposta": r.text[:400]
-        })
+        return jsonify({"ok": r.status_code == 200, "status_code": r.status_code,
+                        "ambiente": AMBIENTE, "base_url": BASE_URL,
+                        "token_prefixo": ACCESS_TOKEN[:30] + "...",
+                        "token_tamanho": len(ACCESS_TOKEN),
+                        "resposta": r.text[:400]})
     except Exception as e:
         return jsonify({"ok": False, "erro": str(e), "ambiente": AMBIENTE})
+
 
 def asaas_cadastrar_cliente(nome, cpf, email):
     r = requests.post(f"{BASE_URL}/v3/customers",
@@ -465,7 +458,6 @@ if __name__ == "__main__":
     print("=" * 60)
     print(f"  🏛️  TEMPLE OF GAMES — {AMBIENTE}")
     print(f"  Porta: {port}")
-    if not ACCESS_TOKEN:
-        print("  ⚠️  ASAAS_API_KEY não configurada")
+    print(f"  Token: {len(ACCESS_TOKEN)} chars" if ACCESS_TOKEN else "  Token: NÃO CONFIGURADO")
     print("=" * 60)
     app.run(host="0.0.0.0", port=port, debug=False)

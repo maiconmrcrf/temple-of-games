@@ -160,7 +160,7 @@ function abrirDeposito() {
     '<label>Valor do depósito (mín. ' + BRL(VALOR_MINIMO) + ')</label>' +
     '<input type="number" id="depValor" placeholder="0,00" min="' + VALOR_MINIMO + '" step="0.01" />' +
     '<button class="btn-gold" onclick="confirmarDeposito()">Gerar QR Code PIX</button>' +
-    '<p style="font-size:.72rem;color:#666;margin-top:12px;text-align:center;">⚠️ Demonstração.</p>');
+    '');
 }
 
 async function confirmarDeposito() {
@@ -231,7 +231,7 @@ function abrirSaque() {
   abrirModal("Sacar",
     '<label>Valor do saque</label><input type="number" id="saqValor" placeholder="0,00" min="1" step="0.01" />' +
     '<button class="btn-gold" onclick="confirmarSaque()">Solicitar Saque</button>' +
-    '<p style="font-size:.72rem;color:#666;margin-top:12px;text-align:center;">⚠️ Demonstração.</p>');
+    '');
 }
 async function confirmarSaque() {
   const v = parseFloat(document.getElementById("saqValor").value) || 0;
