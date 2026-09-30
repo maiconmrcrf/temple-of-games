@@ -163,17 +163,23 @@ def historico_usuario(email):
 @app.route("/api/testar-token")
 def testar_token():
     if not ACCESS_TOKEN:
-        return jsonify({"ok": False, "erro": "Token não configurado. Defina ASAAS_API_KEY."})
+        return jsonify({"ok": False, "erro": "Token nao configurado."})
     try:
         r = requests.get(f"{BASE_URL}/v3/customers?limit=1", headers=HEADERS, timeout=15)
-        return jsonify({"ok": r.status_code == 200, "status_code": r.status_code,
-                        "ambiente": AMBIENTE, "base_url": BASE_URL,
-                        "token_prefixo": ACCESS_TOKEN[:30] + "...",
-                        "token_tamanho": len(ACCESS_TOKEN),
-                        "resposta": r.text[:400]})
+        inicio_hex = ACCESS_TOKEN[:8].encode("utf-8").hex()
+        return jsonify({
+            "ok": r.status_code == 200,
+            "status_code": r.status_code,
+            "ambiente": AMBIENTE,
+            "base_url": BASE_URL,
+            "token_prefixo": ACCESS_TOKEN[:30] + "...",
+            "token_tamanho": len(ACCESS_TOKEN),
+            "token_primeiros_hex": inicio_hex,
+            "token_repr": repr(ACCESS_TOKEN[:40]),
+            "resposta": r.text[:400]
+        })
     except Exception as e:
         return jsonify({"ok": False, "erro": str(e), "ambiente": AMBIENTE})
-
 
 def asaas_cadastrar_cliente(nome, cpf, email):
     r = requests.post(f"{BASE_URL}/v3/customers",
