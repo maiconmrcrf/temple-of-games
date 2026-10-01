@@ -51,7 +51,13 @@ CONFIG_PADRAO = {
          "imagem": "https://i.ibb.co/bTkYQCz/Screenshot-2026-09-30-10-33-26-327-com-android-chrome.png"},
         {"nome": "Fortune Ox",
          "link": "https://templeofgames.com/gameDetailIos?gameId=12475",
-         "imagem": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSPlVsMXAaZ130eBumGDhW3NVDNn5-LTJx-mqtT5ha3ww&s=10"}
+         "imagem": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSPlVsMXAaZ130eBumGDhW3NVDNn5-LTJx-mqtT5ha3ww&s=10"},
+        {"nome": "Tigre Sortudo",
+         "link": "#",
+         "imagem": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRRIuMG3iUsuQD8dvF50cbQiohl7vcsek71fV98_pRYCg&s=10"},
+        {"nome": "Fortune Dragon",
+         "link": "#",
+         "imagem": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQYNKBNAec0CrMnlVic1KyG0f80jsI9Q9WmYhBY7NlSPw&s=10"}
     ]
 }
 
@@ -78,9 +84,9 @@ def get_config():
 
     # MIGRAÇÃO: força atualizar os jogos se a versão antiga estiver salva
     versao_atual = cfg.get("_versao_jogos", 0)
-    if versao_atual < 2:
+    if versao_atual < 3:
         cfg["jogos"] = CONFIG_PADRAO["jogos"]
-        cfg["_versao_jogos"] = 2
+        cfg["_versao_jogos"] = 3
         salvar_json(CONFIG_FILE, cfg)
 
     return cfg
