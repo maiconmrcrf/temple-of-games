@@ -57,7 +57,11 @@ CONFIG_PADRAO = {
          "imagem": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRRIuMG3iUsuQD8dvF50cbQiohl7vcsek71fV98_pRYCg&s=10"},
         {"nome": "Fortune Dragon",
          "link": "#",
-         "imagem": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQYNKBNAec0CrMnlVic1KyG0f80jsI9Q9WmYhBY7NlSPw&s=10"}
+         "imagem": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQYNKBNAec0CrMnlVic1KyG0f80jsI9Q9WmYhBY7NlSPw&s=10"},
+        {"nome": "Ver Mais Jogos",
+         "link": "#vip",
+         "imagem": "https://casasdeapostasonline.pt/wp-content/uploads/2024/11/pragmatic.jpg",
+         "vip": true}
     ]
 }
 
@@ -84,9 +88,9 @@ def get_config():
 
     # MIGRAÇÃO: força atualizar os jogos se a versão antiga estiver salva
     versao_atual = cfg.get("_versao_jogos", 0)
-    if versao_atual < 3:
+    if versao_atual < 4:
         cfg["jogos"] = CONFIG_PADRAO["jogos"]
-        cfg["_versao_jogos"] = 3
+        cfg["_versao_jogos"] = 4
         salvar_json(CONFIG_FILE, cfg)
 
     return cfg
