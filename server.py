@@ -61,7 +61,7 @@ CONFIG_PADRAO = {
         {"nome": "Area VIP - Faca 2 depositos no minimo para liberar",
          "link": "#vip",
          "imagem": "https://casasdeapostasonline.pt/wp-content/uploads/2024/11/pragmatic.jpg",
-         "vip": true}
+         "vip": True}
     ]
 }
 
