@@ -190,3 +190,283 @@ body{ font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-
   line-height: 1.35;
   margin-top: 4px;
 }
+
+/* ============================================ */
+/* SPLASH PREMIUM                                */
+/* ============================================ */
+#view-splash{
+  position: relative;
+  overflow: hidden;
+}
+
+/* Fundo com partículas douradas */
+.splash-bg{
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(circle at 20% 30%, rgba(212,175,55,.08) 0%, transparent 40%),
+    radial-gradient(circle at 80% 70%, rgba(212,175,55,.06) 0%, transparent 40%),
+    radial-gradient(circle at 50% 0%, rgba(212,175,55,.10) 0%, transparent 50%);
+  pointer-events: none;
+}
+.splash-bg::before,
+.splash-bg::after{
+  content: "";
+  position: absolute;
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: var(--dourado);
+  box-shadow:
+    120px 180px 0 -2px rgba(212,175,55,.7),
+    280px 320px 0 -2px rgba(212,175,55,.5),
+    400px 90px 0 -2px rgba(212,175,55,.6),
+    520px 420px 0 -2px rgba(212,175,55,.4),
+    650px 200px 0 -2px rgba(212,175,55,.7),
+    780px 350px 0 -2px rgba(212,175,55,.5),
+    90px 500px 0 -2px rgba(212,175,55,.4),
+    250px 620px 0 -2px rgba(212,175,55,.6),
+    480px 550px 0 -2px rgba(212,175,55,.5),
+    720px 580px 0 -2px rgba(212,175,55,.6);
+  animation: brilho 4s ease-in-out infinite alternate;
+}
+.splash-bg::after{
+  width: 4px; height: 4px;
+  animation-delay: 2s;
+  animation-duration: 5s;
+}
+@keyframes brilho{
+  from{ opacity: .3; transform: translateY(0); }
+  to  { opacity: 1;  transform: translateY(-10px); }
+}
+
+.splash-box{
+  position: relative;
+  z-index: 2;
+}
+
+/* Badge topo */
+.splash-badge{
+  display: inline-block;
+  background: rgba(212,175,55,.12);
+  border: 1px solid rgba(212,175,55,.35);
+  color: var(--dourado);
+  padding: 6px 14px;
+  border-radius: 999px;
+  font-size: .72rem;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  margin-bottom: 20px;
+}
+
+/* Estatísticas mini */
+.splash-stats{
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  margin: 24px 0 16px;
+}
+.stat-mini{
+  background: rgba(255,255,255,.03);
+  border: 1px solid rgba(212,175,55,.15);
+  border-radius: 10px;
+  padding: 10px 6px;
+  text-align: center;
+}
+.stat-mini-valor{
+  font-size: 1.05rem;
+  font-weight: 800;
+  color: var(--dourado);
+  line-height: 1;
+}
+.stat-mini-label{
+  font-size: .62rem;
+  color: var(--texto2);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-top: 4px;
+}
+
+/* Selos de confiança */
+.splash-selos{
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 26px;
+}
+.selo{
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: .68rem;
+  color: var(--texto2);
+  background: rgba(255,255,255,.03);
+  border: 1px solid rgba(255,255,255,.06);
+  padding: 5px 10px;
+  border-radius: 999px;
+}
+.selo i{
+  color: var(--dourado);
+  font-size: .72rem;
+}
+
+/* Botões com ícones */
+.splash-botoes .btn-gold,
+.splash-botoes .btn-ghost{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+/* Aviso mini com ícone */
+.aviso-mini{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+.aviso-mini i{
+  color: var(--dourado);
+}
+
+/* ============================================ */
+/* SPLASH PREMIUM                                */
+/* ============================================ */
+#view-splash{
+  position: relative;
+  overflow: hidden;
+}
+
+/* Fundo com partículas douradas */
+.splash-bg{
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(circle at 20% 30%, rgba(212,175,55,.08) 0%, transparent 40%),
+    radial-gradient(circle at 80% 70%, rgba(212,175,55,.06) 0%, transparent 40%),
+    radial-gradient(circle at 50% 0%, rgba(212,175,55,.10) 0%, transparent 50%);
+  pointer-events: none;
+}
+.splash-bg::before,
+.splash-bg::after{
+  content: "";
+  position: absolute;
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: var(--dourado);
+  box-shadow:
+    120px 180px 0 -2px rgba(212,175,55,.7),
+    280px 320px 0 -2px rgba(212,175,55,.5),
+    400px 90px 0 -2px rgba(212,175,55,.6),
+    520px 420px 0 -2px rgba(212,175,55,.4),
+    650px 200px 0 -2px rgba(212,175,55,.7),
+    780px 350px 0 -2px rgba(212,175,55,.5),
+    90px 500px 0 -2px rgba(212,175,55,.4),
+    250px 620px 0 -2px rgba(212,175,55,.6),
+    480px 550px 0 -2px rgba(212,175,55,.5),
+    720px 580px 0 -2px rgba(212,175,55,.6);
+  animation: brilho 4s ease-in-out infinite alternate;
+}
+.splash-bg::after{
+  width: 4px; height: 4px;
+  animation-delay: 2s;
+  animation-duration: 5s;
+}
+@keyframes brilho{
+  from{ opacity: .3; transform: translateY(0); }
+  to  { opacity: 1;  transform: translateY(-10px); }
+}
+
+.splash-box{
+  position: relative;
+  z-index: 2;
+}
+
+/* Badge topo */
+.splash-badge{
+  display: inline-block;
+  background: rgba(212,175,55,.12);
+  border: 1px solid rgba(212,175,55,.35);
+  color: var(--dourado);
+  padding: 6px 14px;
+  border-radius: 999px;
+  font-size: .72rem;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  margin-bottom: 20px;
+}
+
+/* Estatísticas mini */
+.splash-stats{
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  margin: 24px 0 16px;
+}
+.stat-mini{
+  background: rgba(255,255,255,.03);
+  border: 1px solid rgba(212,175,55,.15);
+  border-radius: 10px;
+  padding: 10px 6px;
+  text-align: center;
+}
+.stat-mini-valor{
+  font-size: 1.05rem;
+  font-weight: 800;
+  color: var(--dourado);
+  line-height: 1;
+}
+.stat-mini-label{
+  font-size: .62rem;
+  color: var(--texto2);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-top: 4px;
+}
+
+/* Selos de confiança */
+.splash-selos{
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 26px;
+}
+.selo{
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: .68rem;
+  color: var(--texto2);
+  background: rgba(255,255,255,.03);
+  border: 1px solid rgba(255,255,255,.06);
+  padding: 5px 10px;
+  border-radius: 999px;
+}
+.selo i{
+  color: var(--dourado);
+  font-size: .72rem;
+}
+
+/* Botões com ícones */
+.splash-botoes .btn-gold,
+.splash-botoes .btn-ghost{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+/* Aviso mini com ícone */
+.aviso-mini{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+.aviso-mini i{
+  color: var(--dourado);
+}

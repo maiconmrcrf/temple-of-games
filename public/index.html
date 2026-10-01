@@ -12,17 +12,47 @@
 <body>
 
 <section class="view ativo" id="view-splash">
+  <div class="splash-bg"></div>
   <div class="splash-box">
+    <div class="splash-badge">✨ Bem-vindo ao</div>
+
     <div class="splash-logo">
       <span class="temple-icon" id="splashLogo">🏛️</span>
       <h1 id="splashNome">TEMPLE<span>OF GAMES</span></h1>
       <p class="splash-sub">A sua arena de jogos online</p>
     </div>
-    <div class="splash-botoes">
-      <button class="btn-gold" onclick="mostrarView('view-login')">Entrar</button>
-      <button class="btn-ghost" onclick="mostrarView('view-cadastro')">Criar Conta</button>
+
+    <div class="splash-stats">
+      <div class="stat-mini">
+        <div class="stat-mini-valor">+50</div>
+        <div class="stat-mini-label">Jogos</div>
+      </div>
+      <div class="stat-mini">
+        <div class="stat-mini-valor">+10</div>
+        <div class="stat-mini-label">Provedores</div>
+      </div>
+      <div class="stat-mini">
+        <div class="stat-mini-valor">24h</div>
+        <div class="stat-mini-label">Suporte</div>
+      </div>
     </div>
-    <p class="aviso-mini">🔒 Ambiente Seguro</p>
+
+    <div class="splash-selos">
+      <div class="selo"><i class="fas fa-bolt"></i> PIX Instantâneo</div>
+      <div class="selo"><i class="fas fa-shield-halved"></i> 100% Seguro</div>
+      <div class="selo"><i class="fas fa-lock"></i> SSL</div>
+    </div>
+
+    <div class="splash-botoes">
+      <button class="btn-gold" onclick="mostrarView('view-login')">
+        <i class="fas fa-right-to-bracket"></i> Entrar
+      </button>
+      <button class="btn-ghost" onclick="mostrarView('view-cadastro')">
+        <i class="fas fa-user-plus"></i> Criar Conta
+      </button>
+    </div>
+
+    <p class="aviso-mini"><i class="fas fa-shield-halved"></i> Ambiente Seguro</p>
   </div>
 </section>
 
