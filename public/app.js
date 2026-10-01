@@ -43,12 +43,18 @@ async function carregarConfig() {
     if (CFG.cores.dourado_claro) root.setProperty("--dourado2", CFG.cores.dourado_claro);
   }
   document.getElementById("gameGrid").innerHTML = (CFG.jogos || []).map(function(j){
+    var btn;
     if (j.vip) {
-      return '<div class="game-card">' +
-        '<img src="' + j.imagem + '" alt="' + j.nome + '">' +
-        '<span>' + j.nome + '</span>' +
-        '<button class="btn-jogar btn-vip" onclick="abrirVIP()">Ver Mais</button>' +
-      '</div>';
+      btn = '<button class="btn-jogar btn-vip" onclick="abrirVIP()">Ver Mais</button>';
+    } else {
+      btn = '<button class="btn-jogar" onclick="abrirJogo(\'' + (j.link || '#') + '\')">▶ Jogar</button>';
+    }
+    return '<div class="game-card">' +
+      '<img src="' + j.imagem + '" alt="' + j.nome + '">' +
+      '<span>' + j.nome + '</span>' +
+      btn +
+    '</div>';
+  }).join("");
     }
     return '<div class="game-card">' +
       '<img src="' + j.imagem + '" alt="' + j.nome + '">' +
