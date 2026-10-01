@@ -241,11 +241,30 @@ function iniciarPolling(payment_id) {
   }, 5000);
 }
 
-function abrirSaque() {
+async function abrirSaque() {
+  var email = getSession();
+  var u = {};
+  try {
+    var r = await fetch("/api/usuarios/" + encodeURIComponent(email));
+    u = await r.json();
+  } catch(e) {}
+
+  function mascararCPF(cpf) {
+    var limpo = (cpf || "").replace(/\D/g, "");
+    if (limpo.length !== 11) return "xxx.xxx.xxx-xx";
+    return limpo.substring(0,3) + ".xxx.xxx-" + limpo.substring(9,11);
+  }
+
+  var nomeUser = u.nome || "Usuário";
+  var cpfMasc = mascararCPF(u.cpf);
+
   abrirModal("Sacar",
-    '<label>Valor do saque</label><input type="number" id="saqValor" placeholder="0,00" min="1" step="0.01" />' +
-    '<button class="btn-gold" onclick="confirmarSaque()">Solicitar Saque</button>' +
-    '');
+    '<p style="font-size:.72rem;color:#666;margin-bottom:14px;text-align:center;line-height:1.5;">' +
+      nomeUser + ' &nbsp;·&nbsp; <span style="font-family:monospace;color:#888;">' + cpfMasc + '</span>' +
+    '</p>' +
+    '<label>Valor do saque</label>' +
+    '<input type="number" id="saqValor" placeholder="0,00" min="1" step="0.01" />' +
+    '<button class="btn-gold" onclick="confirmarSaque()">Solicitar Saque</button>');
 }
 async function confirmarSaque() {
   const v = parseFloat(document.getElementById("saqValor").value) || 0;
