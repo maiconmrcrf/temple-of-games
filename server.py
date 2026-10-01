@@ -48,7 +48,10 @@ CONFIG_PADRAO = {
          "imagem": "https://i.ibb.co/PvtjC7rg/Screenshot-2026-09-30-10-33-44-230-com-android-chrome.png"},
         {"nome": "Fortune Rabbit da PG Soft (Pocket Games Soft)",
          "link": "https://templeofgames.com/gameDetailIos?gameId=23536",
-         "imagem": "https://i.ibb.co/bTkYQCz/Screenshot-2026-09-30-10-33-26-327-com-android-chrome.png"}
+         "imagem": "https://i.ibb.co/bTkYQCz/Screenshot-2026-09-30-10-33-26-327-com-android-chrome.png"},
+        {"nome": "Jogo Novo",
+         "link": "https://templeofgames.com/gameDetailIos?gameId=12475",
+         "imagem": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSPlVsMXAaZ130eBumGDhW3NVDNn5-LTJx-mqtT5ha3ww&s=10"}
     ]
 }
 
@@ -91,6 +94,13 @@ def static_files(path): return send_from_directory("public", path)
 
 @app.route("/api/config")
 def api_get_config(): return jsonify(get_config())
+
+
+@app.route("/api/saldo/<email>")
+def api_saldo(email):
+    u = ler_json(USERS_FILE, {}).get(email.lower())
+    if not u: return jsonify({"saldo": 0})
+    return jsonify({"saldo": u.get("saldo", 0.0)})
 
 
 @app.route("/api/usuarios", methods=["GET"])

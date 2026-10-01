@@ -42,9 +42,13 @@ async function carregarConfig() {
     if (CFG.cores.dourado) root.setProperty("--dourado", CFG.cores.dourado);
     if (CFG.cores.dourado_claro) root.setProperty("--dourado2", CFG.cores.dourado_claro);
   }
-  document.getElementById("gameGrid").innerHTML = (CFG.jogos || []).map(j =>
-    '<a href="' + (j.link || '#') + '" class="game-card" target="_blank" rel="noopener">' +
-    '<img src="' + j.imagem + '" alt="' + j.nome + '"><span>' + j.nome + '</span></a>').join("");
+  document.getElementById("gameGrid").innerHTML = (CFG.jogos || []).map(function(j){
+    return '<div class="game-card">' +
+      '<img src="' + j.imagem + '" alt="' + j.nome + '">' +
+      '<span>' + j.nome + '</span>' +
+      '<button class="btn-jogar" onclick="abrirJogo(\'' + (j.link || '#') + '\')">▶ Jogar</button>' +
+    '</div>';
+  }).join("");
 }
 
 async function fazerCadastro(e) {
@@ -279,6 +283,40 @@ async function abrirHistorico() {
                '<span class="' + cls + '">' + sinal + ' ' + BRL(Math.abs(item.valor)) + '</span></div>';
       }).join("");
   abrirModal("Histórico", html);
+}
+
+function abrirJogo(url) {
+  var email = getSession();
+  if (!email) {
+    alert("Faça login para jogar.");
+    return;
+  }
+  fetch("/api/usuarios/" + encodeURIComponent(email))
+    .then(function(r){ return r.json(); })
+    .then(function(u){
+      var saldo = u.saldo || 0;
+      if (saldo <= 0) {
+        // Modal de aviso
+        abrirModal("Saldo Insuficiente",
+          '<div style="text-align:center;padding:10px 0;">' +
+            '<div style="font-size:3rem;margin-bottom:10px;">🔒</div>' +
+            '<p style="font-size:1rem;color:#d4af37;font-weight:700;margin-bottom:10px;">Você está sem saldo!</p>' +
+            '<p style="font-size:.85rem;color:#9ca3af;line-height:1.5;margin-bottom:20px;">' +
+              'Faça um depósito para liberar o acesso aos jogos.' +
+            '</p>' +
+            '<button class="btn-gold" onclick="fecharModal();abrirDeposito()" style="width:100%;">' +
+              '💰 Depositar Agora' +
+            '</button>' +
+            '<button class="btn-ghost" onclick="fecharModal()" style="width:100%;margin-top:8px;">' +
+              'Depois' +
+            '</button>' +
+          '</div>');
+        return;
+      }
+      // Tem saldo: abre o jogo
+      window.open(url, "_blank");
+    })
+    .catch(function(){ alert("Erro ao verificar saldo."); });
 }
 
 function abrirLinks() {
