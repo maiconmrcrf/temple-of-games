@@ -43,13 +43,6 @@ async function carregarConfig() {
     if (CFG.cores.dourado_claro) root.setProperty("--dourado2", CFG.cores.dourado_claro);
   }
   document.getElementById("gameGrid").innerHTML = (CFG.jogos || []).map(function(j){
-    if (j.vip) {
-      return '<div class="game-card vip-card">' +
-        '<img src="' + j.imagem + '" alt="' + j.nome + '">' +
-        '<span>' + j.nome + '</span>' +
-        '<button class="btn-jogar btn-vip" onclick="abrirVIP()">👑 Ver Mais</button>' +
-      '</div>';
-    }
     return '<div class="game-card">' +
       '<img src="' + j.imagem + '" alt="' + j.nome + '">' +
       '<span>' + j.nome + '</span>' +
@@ -311,17 +304,7 @@ async function abrirHistorico() {
   abrirModal("Histórico", html);
 }
 
-function abrirVIP() {
-  abrirModal("👑 Área VIP",
-    '<div style="text-align:center;padding:16px 0;">' +
-      '<div style="font-size:3rem;margin-bottom:12px;">🔒</div>' +
-      '<p style="font-size:1rem;color:#d4af37;font-weight:800;margin-bottom:12px;">Área VIP Exclusiva</p>' +
-      '<p style="font-size:.88rem;color:#9ca3af;line-height:1.6;margin-bottom:22px;">' +
-        'Faça <strong style="color:#d4af37;">mais de 2 depósitos</strong><br>no mínimo para liberar o acesso' +
-      '</p>' +
-      '<button class="btn-gold" onclick="fecharModal();abrirDeposito()" style="width:100%;">💰 Depositar Agora</button>' +
-    '</div>');
-}
+
 
 function abrirVIP() {
   abrirModal("👑 Jogos VIP",
