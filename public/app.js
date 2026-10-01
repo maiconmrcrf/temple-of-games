@@ -1,106 +1,132 @@
-const SESSION_KEY = "temple_session_v4";
-const VALOR_MINIMO = 5.00;
-let CFG = null;
+/* ============ TEMPLE OF GAMES - APP ============ */
+var SESSION_KEY = "temple_session_v5";
+var VALOR_MINIMO = 5.00;
+var CFG = null;
+var _pollTimer = null;
 
+/* ---------- HELPERS ---------- */
 function getSession() { return localStorage.getItem(SESSION_KEY); }
 function setSession(e) { localStorage.setItem(SESSION_KEY, e); }
 function clearSession() { localStorage.removeItem(SESSION_KEY); }
-function BRL(v) { return "R$ " + Number(v).toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 2 }); }
-
+function BRL(v) {
+  return "R$ " + Number(v).toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+}
 function mostrarView(id) {
-  document.querySelectorAll(".view").forEach(v => v.classList.remove("ativo"));
+  document.querySelectorAll(".view").forEach(function(v){ v.classList.remove("ativo"); });
   document.getElementById(id).classList.add("ativo");
   window.scrollTo({ top: 0, behavior: "instant" });
 }
 function setMsg(id, txt, tipo) {
-  const el = document.getElementById(id);
+  var el = document.getElementById(id);
   el.textContent = txt;
   el.className = "auth-msg" + (tipo ? " " + tipo : "");
 }
 function mascaraCPF(inp) {
-  let v = inp.value.replace(/\D/g, "").slice(0, 11);
+  var v = inp.value.replace(/\D/g, "").slice(0, 11);
   v = v.replace(/(\d{3})(\d)/, "$1.$2").replace(/(\d{3})(\d)/, "$1.$2").replace(/(\d{3})(\d{1,2})$/, "$1-$2");
   inp.value = v;
 }
+function escapar(s) {
+  return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;").replace(/'/g,"&#39;");
+}
 
+/* ---------- CARREGAR CONFIG ---------- */
 async function carregarConfig() {
-  try { CFG = await (await fetch("/api/config")).json(); } catch { CFG = null; }
+  try { CFG = await (await fetch("/api/config")).json(); }
+  catch(e) { CFG = null; }
   if (!CFG) return;
-  const emp = CFG.empresa || {};
-  const nome = emp.nome || "Temple of Games";
-  const logo = emp.logo_emoji || "🏛️";
-  const partes = nome.split(" ");
-  document.getElementById("splashLogo").textContent = logo;
-  document.getElementById("splashNome").innerHTML = partes[0].toUpperCase() + "<span>" + partes.slice(1).join(" ").toUpperCase() + "</span>";
-  document.getElementById("loginLogo").textContent = logo;
-  document.getElementById("cadLogo").textContent = logo;
-  document.getElementById("topLogo").innerHTML = partes[0].toUpperCase() + ' <span class="logo-icon">' + logo + '</span> ' + partes.slice(1).join(" ").toUpperCase();
-  document.getElementById("footNome").textContent = nome;
-  if (CFG.banner) document.getElementById("bannerApp").textContent = CFG.banner;
+
+  var emp = CFG.empresa || {};
+  var nome = emp.nome || "Temple of Games";
+  var logo = emp.logo_emoji || "🏛️";
+  var partes = nome.split(" ");
+
+  var elSplash = document.getElementById("splashLogo");
+  if (elSplash) elSplash.textContent = logo;
+  var elSplashNome = document.getElementById("splashNome");
+  if (elSplashNome) elSplashNome.innerHTML = partes[0].toUpperCase() + "<span>" + partes.slice(1).join(" ").toUpperCase() + "</span>";
+  var elLogin = document.getElementById("loginLogo");
+  if (elLogin) elLogin.textContent = logo;
+  var elCad = document.getElementById("cadLogo");
+  if (elCad) elCad.textContent = logo;
+  var elTop = document.getElementById("topLogo");
+  if (elTop) elTop.innerHTML = partes[0].toUpperCase() + ' <span class="logo-icon">' + logo + '</span> ' + partes.slice(1).join(" ").toUpperCase();
+  var elFoot = document.getElementById("footNome");
+  if (elFoot) elFoot.textContent = nome;
+  var elBanner = document.getElementById("bannerApp");
+  if (elBanner && CFG.banner) elBanner.textContent = CFG.banner;
+
   if (CFG.cores) {
-    const root = document.documentElement.style;
+    var root = document.documentElement.style;
     if (CFG.cores.dourado) root.setProperty("--dourado", CFG.cores.dourado);
     if (CFG.cores.dourado_claro) root.setProperty("--dourado2", CFG.cores.dourado_claro);
   }
-  document.getElementById("gameGrid").innerHTML = (CFG.jogos || []).map(function(j){
+
+  // Renderiza jogos
+  var grid = document.getElementById("gameGrid");
+  if (!grid) return;
+  var lista = CFG.jogos || [];
+  var html = "";
+  for (var i = 0; i < lista.length; i++) {
+    var j = lista[i];
     var btn;
     if (j.vip) {
       btn = '<button class="btn-jogar btn-vip" onclick="abrirVIP()">Ver Mais</button>';
     } else {
-      btn = '<button class="btn-jogar" onclick="abrirJogo(\'' + (j.link || '#') + '\')">▶ Jogar</button>';
+      btn = '<button class="btn-jogar" onclick="abrirJogo(\'' + escapar(j.link || "#") + '\')">▶ Jogar</button>';
     }
-    return '<div class="game-card">' +
-      '<img src="' + j.imagem + '" alt="' + j.nome + '">' +
-      '<span>' + j.nome + '</span>' +
+    html += '<div class="game-card">' +
+      '<img src="' + escapar(j.imagem || "") + '" alt="' + escapar(j.nome || "") + '">' +
+      '<span>' + escapar(j.nome || "") + '</span>' +
       btn +
-    '</div>';
-  }).join("");
-    }
-    return '<div class="game-card">' +
-      '<img src="' + j.imagem + '" alt="' + j.nome + '">' +
-      '<span>' + j.nome + '</span>' +
-      '<button class="btn-jogar" onclick="abrirJogo(\'' + (j.link || '#') + '\')">▶ Jogar</button>' +
-    '</div>';
-  }).join("");
+      '</div>';
+  }
+  grid.innerHTML = html;
 }
 
+/* ---------- CADASTRO ---------- */
 async function fazerCadastro(e) {
   e.preventDefault();
-  const nome   = document.getElementById("cadNome").value.trim();
-  const nasc   = document.getElementById("cadNasc").value;
-  const cpf    = document.getElementById("cadCpf").value.trim();
-  const email  = document.getElementById("cadEmail").value.trim().toLowerCase();
-  const senha  = document.getElementById("cadSenha").value;
-  const senha2 = document.getElementById("cadSenha2").value;
+  var nome = document.getElementById("cadNome").value.trim();
+  var nasc = document.getElementById("cadNasc").value;
+  var cpf = document.getElementById("cadCpf").value.trim();
+  var email = document.getElementById("cadEmail").value.trim().toLowerCase();
+  var senha = document.getElementById("cadSenha").value;
+  var senha2 = document.getElementById("cadSenha2").value;
+
   if (nome.split(" ").filter(Boolean).length < 2) return setMsg("msgCadastro", "Informe nome e sobrenome.", "erro");
   if (!nasc) return setMsg("msgCadastro", "Informe a data de nascimento.", "erro");
   if (cpf.replace(/\D/g, "").length !== 11) return setMsg("msgCadastro", "CPF deve ter 11 dígitos.", "erro");
   if (senha.length < 6) return setMsg("msgCadastro", "Senha mín. 6 caracteres.", "erro");
   if (senha !== senha2) return setMsg("msgCadastro", "As senhas não coincidem.", "erro");
+
   setMsg("msgCadastro", "Criando conta...", "");
   try {
-    const r = await fetch("/api/usuarios", {
-      method: "POST", headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ nome, nasc, cpf, email, senha })
+    var r = await fetch("/api/usuarios", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ nome: nome, nasc: nasc, cpf: cpf, email: email, senha: senha })
     });
-    const d = await r.json();
+    var d = await r.json();
     if (!r.ok) return setMsg("msgCadastro", "❌ " + (d.erro || "Erro"), "erro");
     setMsg("msgCadastro", "✅ Conta criada!", "ok");
-    setTimeout(() => { setSession(email); abrirApp(); }, 900);
+    setTimeout(function(){ setSession(email); abrirApp(); }, 900);
   } catch (err) { setMsg("msgCadastro", "❌ " + err.message, "erro"); }
 }
 
+/* ---------- LOGIN ---------- */
 async function fazerLogin(e) {
   e.preventDefault();
-  const email = document.getElementById("loginEmail").value.trim().toLowerCase();
-  const senha = document.getElementById("loginSenha").value;
+  var email = document.getElementById("loginEmail").value.trim().toLowerCase();
+  var senha = document.getElementById("loginSenha").value;
   setMsg("msgLogin", "Verificando...", "");
   try {
-    const r = await fetch("/api/login", {
-      method: "POST", headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email, senha })
+    var r = await fetch("/api/login", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email: email, senha: senha })
     });
-    const d = await r.json();
+    var d = await r.json();
     if (!r.ok) return setMsg("msgLogin", "❌ " + (d.erro || "Erro"), "erro");
     setSession(email);
     setMsg("msgLogin", "✅ Bem-vindo!", "ok");
@@ -110,47 +136,42 @@ async function fazerLogin(e) {
 
 function sair() {
   if (!confirm("Deseja realmente sair da conta?")) return;
-  clearSession(); fecharMenu(); mostrarView("view-splash");
+  clearSession();
+  fecharMenu();
+  mostrarView("view-splash");
   document.getElementById("loginEmail").value = "";
   document.getElementById("loginSenha").value = "";
   document.getElementById("msgLogin").textContent = "";
 }
 
+/* ---------- ABRIR APP ---------- */
 async function abrirApp() {
-  const email = getSession();
+  var email = getSession();
   if (!email) return mostrarView("view-splash");
   try {
-    const r = await fetch("/api/usuarios/" + encodeURIComponent(email));
+    var r = await fetch("/api/usuarios/" + encodeURIComponent(email));
     if (!r.ok) { clearSession(); return mostrarView("view-splash"); }
-    const u = await r.json();
+    var u = await r.json();
     document.getElementById("saldoApp").textContent = BRL(u.saldo || 0);
-    document.getElementById("sbSaldo").textContent  = BRL(u.saldo || 0);
-    document.getElementById("sbNome").textContent   = u.nome;
-    document.getElementById("sbEmail").textContent  = u.email;
-
-    // Esconde a promo se o usuário já depositou alguma vez
-    var promo = document.getElementById("promoLocked");
-    if (promo) {
-      var temDeposito = (u.historico || []).some(function(h){
-        return h.tipo && h.tipo.indexOf("Dep") === 0;
-      });
-      promo.style.display = temDeposito ? "none" : "block";
-    }
-
+    document.getElementById("sbSaldo").textContent = BRL(u.saldo || 0);
+    document.getElementById("sbNome").textContent = u.nome;
+    document.getElementById("sbEmail").textContent = u.email;
     mostrarView("view-app");
-  } catch { clearSession(); mostrarView("view-splash"); }
+  } catch(e) { clearSession(); mostrarView("view-splash"); }
 }
 
 async function atualizarSaldo() {
-  const email = getSession(); if (!email) return;
+  var email = getSession();
+  if (!email) return;
   try {
-    const r = await fetch("/api/usuarios/" + encodeURIComponent(email));
-    const u = await r.json();
+    var r = await fetch("/api/usuarios/" + encodeURIComponent(email));
+    var u = await r.json();
     document.getElementById("saldoApp").textContent = BRL(u.saldo || 0);
-    document.getElementById("sbSaldo").textContent  = BRL(u.saldo || 0);
-  } catch {}
+    document.getElementById("sbSaldo").textContent = BRL(u.saldo || 0);
+  } catch(e) {}
 }
 
+/* ---------- MENU / MODAL ---------- */
 function abrirMenu() {
   document.getElementById("sidebar").classList.add("ativo");
   document.getElementById("overlay").classList.add("ativo");
@@ -167,41 +188,43 @@ function abrirModal(titulo, corpo) {
 }
 function fecharModal() {
   document.getElementById("modal").classList.remove("ativo");
-  if (window._pollTimer) { clearInterval(window._pollTimer); window._pollTimer = null; }
+  if (_pollTimer) { clearInterval(_pollTimer); _pollTimer = null; }
 }
 
+/* ---------- PERFIL ---------- */
 async function abrirPerfil() {
-  const r = await fetch("/api/usuarios/" + encodeURIComponent(getSession()));
-  const u = await r.json();
+  var r = await fetch("/api/usuarios/" + encodeURIComponent(getSession()));
+  var u = await r.json();
   abrirModal("Meu Perfil",
-    '<label>Nome completo</label><div class="modal-info">' + u.nome + '</div>' +
-    '<label>Data de nascimento</label><div class="modal-info">' + (u.nasc || "—") + '</div>' +
-    '<label>CPF</label><div class="modal-info">' + (u.cpf || "—") + '</div>' +
-    '<label>E-mail</label><div class="modal-info">' + u.email + '</div>' +
+    '<label>Nome completo</label><div class="modal-info">' + escapar(u.nome) + '</div>' +
+    '<label>Data de nascimento</label><div class="modal-info">' + escapar(u.nasc || "—") + '</div>' +
+    '<label>CPF</label><div class="modal-info">' + escapar(u.cpf || "—") + '</div>' +
+    '<label>E-mail</label><div class="modal-info">' + escapar(u.email) + '</div>' +
     '<label>Saldo atual</label><div class="modal-info"><strong>' + BRL(u.saldo || 0) + '</strong></div>');
 }
 
+/* ---------- DEPOSITO ---------- */
 function abrirDeposito() {
   abrirModal("Depositar via PIX",
     '<p style="font-size:.85rem;color:#9ca3af;margin-bottom:10px;">Informe o valor. Uma cobrança PIX será gerada.</p>' +
     '<label>Valor do depósito (mín. ' + BRL(VALOR_MINIMO) + ')</label>' +
     '<input type="number" id="depValor" placeholder="0,00" min="' + VALOR_MINIMO + '" step="0.01" />' +
-    '<button class="btn-gold" onclick="confirmarDeposito()">Gerar QR Code PIX</button>' +
-    '');
+    '<button class="btn-gold" onclick="confirmarDeposito()">Gerar QR Code PIX</button>');
 }
 
 async function confirmarDeposito() {
-  const v = parseFloat(document.getElementById("depValor").value) || 0;
+  var v = parseFloat(document.getElementById("depValor").value) || 0;
   if (v < VALOR_MINIMO) return alert("❌ Valor mínimo: " + BRL(VALOR_MINIMO));
-  const email = getSession();
+  var email = getSession();
   document.getElementById("modalCorpo").innerHTML =
     '<p style="text-align:center;color:#9ca3af;padding:24px 0;"><span class="spinner"></span> Gerando QR Code PIX...</p>';
   try {
-    const r = await fetch("/api/criar-pix", {
-      method: "POST", headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ valor: v, email })
+    var r = await fetch("/api/criar-pix", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ valor: v, email: email })
     });
-    const data = await r.json();
+    var data = await r.json();
     if (data.erro) {
       document.getElementById("modalCorpo").innerHTML =
         '<p class="pix-status erro">❌ ' + data.erro + '</p><button class="btn-gold" onclick="abrirDeposito()">Tentar novamente</button>';
@@ -222,155 +245,135 @@ async function confirmarDeposito() {
 }
 
 function copiarPix() {
-  const ta = document.querySelector(".pix-payload");
+  var ta = document.querySelector(".pix-payload");
   if (!ta) return;
   ta.select();
   try { document.execCommand("copy"); alert("✅ Copiado!"); }
-  catch { navigator.clipboard.writeText(ta.value).then(() => alert("✅ Copiado!"), () => alert("Copie manualmente.")); }
+  catch(e) { navigator.clipboard.writeText(ta.value).then(function(){ alert("✅ Copiado!"); }, function(){ alert("Copie manualmente."); }); }
 }
 
 function iniciarPolling(payment_id) {
-  if (window._pollTimer) clearInterval(window._pollTimer);
-  let tentativas = 0;
-  window._pollTimer = setInterval(async () => {
+  if (_pollTimer) clearInterval(_pollTimer);
+  var tentativas = 0;
+  _pollTimer = setInterval(async function(){
     tentativas++;
     if (tentativas > 120) {
-      clearInterval(window._pollTimer); window._pollTimer = null;
-      const el = document.getElementById("pixStatus");
+      clearInterval(_pollTimer); _pollTimer = null;
+      var el = document.getElementById("pixStatus");
       if (el) { el.className = "pix-status erro"; el.textContent = "⏱️ Tempo esgotado."; }
       return;
     }
     try {
-      const r = await fetch("/api/verificar-pagamento/" + payment_id);
-      const d = await r.json();
-      if (["RECEIVED","CONFIRMED","RECEIVED_IN_CASH"].includes(d.status)) {
-        clearInterval(window._pollTimer); window._pollTimer = null;
+      var r = await fetch("/api/verificar-pagamento/" + payment_id);
+      var d = await r.json();
+      if (["RECEIVED","CONFIRMED","RECEIVED_IN_CASH"].indexOf(d.status) !== -1) {
+        clearInterval(_pollTimer); _pollTimer = null;
         await atualizarSaldo();
-        const el = document.getElementById("pixStatus");
+        var el = document.getElementById("pixStatus");
         if (el) { el.className = "pix-status ok"; el.textContent = "✅ Pagamento confirmado!"; }
-        setTimeout(() => { fecharModal(); alert("✅ Pagamento confirmado!"); }, 1200);
+        setTimeout(function(){ fecharModal(); alert("✅ Pagamento confirmado!"); }, 1200);
       }
-    } catch {}
+    } catch(e) {}
   }, 5000);
+}
+
+/* ---------- SAQUE ---------- */
+function mascararCPF(cpf) {
+  var limpo = (cpf || "").replace(/\D/g, "");
+  if (limpo.length !== 11) return "xxx.xxx.xxx-xx";
+  return limpo.substring(0,3) + ".xxx.xxx-" + limpo.substring(9,11);
 }
 
 async function abrirSaque() {
   var email = getSession();
   var u = {};
-  try {
-    var r = await fetch("/api/usuarios/" + encodeURIComponent(email));
-    u = await r.json();
-  } catch(e) {}
-
-  function mascararCPF(cpf) {
-    var limpo = (cpf || "").replace(/\D/g, "");
-    if (limpo.length !== 11) return "xxx.xxx.xxx-xx";
-    return limpo.substring(0,3) + ".xxx.xxx-" + limpo.substring(9,11);
-  }
-
-  var nomeUser = u.nome || "Usuário";
-  var cpfMasc = mascararCPF(u.cpf);
-
+  try { u = await (await fetch("/api/usuarios/" + encodeURIComponent(email))).json(); } catch(e) {}
   abrirModal("Sacar",
     '<p style="font-size:.72rem;color:#666;margin-bottom:14px;text-align:center;line-height:1.5;">' +
-      nomeUser + ' &nbsp;·&nbsp; <span style="font-family:monospace;color:#888;">' + cpfMasc + '</span>' +
+      escapar(u.nome || "Usuário") + ' &nbsp;·&nbsp; <span style="font-family:monospace;color:#888;">' + mascararCPF(u.cpf) + '</span>' +
     '</p>' +
     '<label>Valor do saque</label>' +
     '<input type="number" id="saqValor" placeholder="0,00" min="1" step="0.01" />' +
     '<button class="btn-gold" onclick="confirmarSaque()">Solicitar Saque</button>');
 }
+
 async function confirmarSaque() {
-  const v = parseFloat(document.getElementById("saqValor").value) || 0;
+  var v = parseFloat(document.getElementById("saqValor").value) || 0;
   if (v <= 0) return alert("Informe um valor válido.");
-  const email = getSession();
+  var email = getSession();
   try {
-    const r = await fetch('/api/usuarios/' + encodeURIComponent(email) + '/saldo', {
+    var r = await fetch("/api/usuarios/" + encodeURIComponent(email) + "/saldo", {
       method: "POST", headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ delta: -v, motivo: "Saque" })
     });
-    const d = await r.json();
+    var d = await r.json();
     if (!r.ok) return alert("❌ " + (d.erro || "Erro"));
     if (d.saldo < 0) {
-      await fetch('/api/usuarios/' + encodeURIComponent(email) + '/saldo', {
+      await fetch("/api/usuarios/" + encodeURIComponent(email) + "/saldo", {
         method: "POST", headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ delta: v, motivo: "Estorno saque" })
       });
       return alert("❌ Saldo insuficiente.");
     }
-    await atualizarSaldo(); fecharModal();
+    await atualizarSaldo();
+    fecharModal();
     alert("✅ Saque de " + BRL(v) + " solicitado!");
-  } catch (err) { alert("Erro: " + err.message); }
+  } catch(err) { alert("Erro: " + err.message); }
 }
 
+/* ---------- HISTORICO ---------- */
 async function abrirHistorico() {
-  const r = await fetch("/api/usuarios/" + encodeURIComponent(getSession()) + "/historico");
-  const h = await r.json();
-  const html = !h.length
+  var r = await fetch("/api/usuarios/" + encodeURIComponent(getSession()) + "/historico");
+  var h = await r.json();
+  var html = !h.length
     ? '<div class="hist-empty">Nenhuma movimentação.</div>'
-    : h.map(item => {
-        const dt = new Date(item.data).toLocaleString("pt-BR");
-        const cls = item.valor >= 0 ? "val-pos" : "val-neg";
-        const sinal = item.valor >= 0 ? "+" : "−";
-        return '<div class="hist-item"><span>' + item.tipo + '<br><small style="color:#666">' + dt + '</small></span>' +
+    : h.map(function(item){
+        var dt = new Date(item.data).toLocaleString("pt-BR");
+        var cls = item.valor >= 0 ? "val-pos" : "val-neg";
+        var sinal = item.valor >= 0 ? "+" : "−";
+        return '<div class="hist-item"><span>' + escapar(item.tipo) + '<br><small style="color:#666">' + dt + '</small></span>' +
                '<span class="' + cls + '">' + sinal + ' ' + BRL(Math.abs(item.valor)) + '</span></div>';
       }).join("");
   abrirModal("Histórico", html);
 }
 
-
+/* ---------- JOGOS E VIP ---------- */
+async function abrirJogo(url) {
+  var email = getSession();
+  if (!email) return alert("Faça login para jogar.");
+  try {
+    var u = await (await fetch("/api/usuarios/" + encodeURIComponent(email))).json();
+    var saldo = u.saldo || 0;
+    if (saldo <= 0) {
+      abrirModal("Saldo Insuficiente",
+        '<div style="text-align:center;padding:10px 0;">' +
+          '<div style="font-size:3rem;margin-bottom:10px;">🔒</div>' +
+          '<p style="font-size:1rem;color:#d4af37;font-weight:700;margin-bottom:10px;">Você está sem saldo!</p>' +
+          '<p style="font-size:.85rem;color:#9ca3af;line-height:1.5;margin-bottom:20px;">' +
+            'Faça um depósito para liberar o acesso aos jogos.' +
+          '</p>' +
+          '<button class="btn-gold" onclick="fecharModal();abrirDeposito()" style="width:100%;">💰 Depositar Agora</button>' +
+          '<button class="btn-ghost" onclick="fecharModal()" style="width:100%;margin-top:8px;">Depois</button>' +
+        '</div>');
+      return;
+    }
+    window.open(url, "_blank");
+  } catch(e) { alert("Erro ao verificar saldo."); }
+}
 
 function abrirVIP() {
-  abrirModal("👑 Jogos VIP",
-    '<div style="text-align:center;padding:18px 0;">' +
-      '<div style="font-size:3rem;margin-bottom:12px;">🔒</div>' +
-      '<p style="font-size:1.05rem;color:#d4af37;font-weight:800;margin-bottom:12px;">Bloqueado</p>' +
-      '<p style="font-size:.88rem;color:#9ca3af;line-height:1.6;margin-bottom:22px;">' +
-        'Faça <strong style="color:#d4af37;">2 depósitos</strong> no mínimo<br>para liberar mais jogos' +
+  abrirModal("Área VIP",
+    '<div style="text-align:center;padding:14px 0;">' +
+      '<div style="font-size:2.6rem;margin-bottom:10px;">🔒</div>' +
+      '<p style="font-size:1rem;color:#d4af37;font-weight:800;margin-bottom:10px;">Área VIP Bloqueada</p>' +
+      '<p style="font-size:.85rem;color:#9ca3af;line-height:1.6;margin-bottom:20px;">' +
+        'Faça <strong style="color:#d4af37;">2 depósitos</strong> no mínimo<br>para liberar' +
       '</p>' +
       '<button class="btn-gold" onclick="fecharModal();abrirDeposito()" style="width:100%;">💰 Depositar Agora</button>' +
     '</div>');
 }
 
-function abrirJogo(url) {
-  var email = getSession();
-  if (!email) {
-    alert("Faça login para jogar.");
-    return;
-  }
-  fetch("/api/usuarios/" + encodeURIComponent(email))
-    .then(function(r){ return r.json(); })
-    .then(function(u){
-      var saldo = u.saldo || 0;
-      if (saldo <= 0) {
-        // Modal de aviso
-        abrirModal("Saldo Insuficiente",
-          '<div style="text-align:center;padding:10px 0;">' +
-            '<div style="font-size:3rem;margin-bottom:10px;">🔒</div>' +
-            '<p style="font-size:1rem;color:#d4af37;font-weight:700;margin-bottom:10px;">Você está sem saldo!</p>' +
-            '<p style="font-size:.85rem;color:#9ca3af;line-height:1.5;margin-bottom:20px;">' +
-              'Faça um depósito para liberar o acesso aos jogos.' +
-            '</p>' +
-            '<button class="btn-gold" onclick="fecharModal();abrirDeposito()" style="width:100%;">' +
-              '💰 Depositar Agora' +
-            '</button>' +
-            '<button class="btn-ghost" onclick="fecharModal()" style="width:100%;margin-top:8px;">' +
-              'Depois' +
-            '</button>' +
-          '</div>');
-        return;
-      }
-      // Tem saldo: abre o jogo
-      window.open(url, "_blank");
-    })
-    .catch(function(){ alert("Erro ao verificar saldo."); });
-}
-
-function abrirLinks() {
-  abrirModal("Links Úteis",
-    '<a href="https://templeofgames.com" target="_blank" style="text-decoration:none;"><div class="modal-info" style="margin-bottom:8px;"><strong>🏛️ Temple of Games</strong><br><small>Site oficial</small></div></a>' +
-    '<a href="https://www.pragmaticplay.com/br/" target="_blank" style="text-decoration:none;"><div class="modal-info" style="margin-bottom:8px;"><strong>🎰 Pragmatic Play</strong><br><small>Provedor</small></div></a>' +
-    '<a href="https://www.pgsoft.com/" target="_blank" style="text-decoration:none;"><div class="modal-info"><strong>🐯 PG Soft</strong><br><small>Provedor</small></div></a>');
-}
+/* ---------- SUPORTE ---------- */
 function abrirSuporte() {
   abrirModal("Suporte",
     '<label>E-mail</label><div class="modal-info">suporte@templeofgames.demo</div>' +
@@ -378,6 +381,7 @@ function abrirSuporte() {
     '<label>Horário</label><div class="modal-info">24h / 7 dias</div>');
 }
 
+/* ---------- INIT ---------- */
 (async function init() {
   await carregarConfig();
   if (getSession()) setTimeout(abrirApp, 300);
