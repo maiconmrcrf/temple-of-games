@@ -58,7 +58,7 @@ CONFIG_PADRAO = {
         {"nome": "Fortune Dragon",
          "link": "#",
          "imagem": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQYNKBNAec0CrMnlVic1KyG0f80jsI9Q9WmYhBY7NlSPw&s=10"},
-        {"nome": "Area VIP - Faca 2 depositos no minimo para liberar",
+        {"nome": "Área VIP - Faça 2 depósitos no mínimo para liberar",
          "link": "#vip",
          "imagem": "https://casasdeapostasonline.pt/wp-content/uploads/2024/11/pragmatic.jpg",
          "vip": True}
