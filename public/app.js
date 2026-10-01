@@ -323,6 +323,18 @@ function abrirVIP() {
     '</div>');
 }
 
+function abrirVIP() {
+  abrirModal("👑 Jogos VIP",
+    '<div style="text-align:center;padding:18px 0;">' +
+      '<div style="font-size:3rem;margin-bottom:12px;">🔒</div>' +
+      '<p style="font-size:1.05rem;color:#d4af37;font-weight:800;margin-bottom:12px;">Bloqueado</p>' +
+      '<p style="font-size:.88rem;color:#9ca3af;line-height:1.6;margin-bottom:22px;">' +
+        'Faça <strong style="color:#d4af37;">2 depósitos</strong> no mínimo<br>para liberar mais jogos' +
+      '</p>' +
+      '<button class="btn-gold" onclick="fecharModal();abrirDeposito()" style="width:100%;">💰 Depositar Agora</button>' +
+    '</div>');
+}
+
 function abrirJogo(url) {
   var email = getSession();
   if (!email) {

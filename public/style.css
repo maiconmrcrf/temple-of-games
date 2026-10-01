@@ -526,3 +526,15 @@ body {
   font-weight: 900;
   letter-spacing: .5px;
 }
+
+/* ============ CARD VIP ============ */
+.vip-card img {
+  border: 2px solid var(--dourado) !important;
+  box-shadow: 0 0 16px rgba(212,175,55,.35);
+}
+.btn-vip {
+  background: linear-gradient(180deg, #ffd700, #b8860b) !important;
+  color: #000 !important;
+  font-weight: 900;
+  letter-spacing: .5px;
+}
