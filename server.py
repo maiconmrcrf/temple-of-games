@@ -37,19 +37,19 @@ CONFIG_PADRAO = {
     "banner": "ONLINE CASINO GAMES",
     "cores": {"dourado": "#d4af37", "dourado_claro": "#f0c040"},
     "jogos": [
-        {"nome": "Zeus vs Hades: Deuses da Guerra, da Pragmatic Play",
+        {"nome": "Zeus vs Hades",
          "link": "https://www.pragmaticplay.com/br/jogos/zeus-vs-hades-gods-of-war-250/?gamelang=br&cur=BRL",
          "imagem": "https://i.ibb.co/PzcPLBtg/Screenshot-2026-09-30-10-34-24-313-com-android-chrome.png"},
-        {"nome": "Fortune Tiger da PG Soft (Pocket Games Soft)",
+        {"nome": "Fortune Tiger",
          "link": "https://templeofgames.com/gameDetailIos?gameId=23537",
          "imagem": "https://i.ibb.co/bRgRw8kF/Screenshot-2026-09-30-10-34-02-165-com-android-chrome.png"},
-        {"nome": "Portões do Olimpo por Pragmatic Play",
+        {"nome": "Gates of Olympus",
          "link": "https://www.pragmaticplay.com/br/jogos/gates-of-olympus/",
          "imagem": "https://i.ibb.co/PvtjC7rg/Screenshot-2026-09-30-10-33-44-230-com-android-chrome.png"},
-        {"nome": "Fortune Rabbit da PG Soft (Pocket Games Soft)",
+        {"nome": "Fortune Rabbit",
          "link": "https://templeofgames.com/gameDetailIos?gameId=23536",
          "imagem": "https://i.ibb.co/bTkYQCz/Screenshot-2026-09-30-10-33-26-327-com-android-chrome.png"},
-        {"nome": "Jogo Novo",
+        {"nome": "Fortune Ox",
          "link": "https://templeofgames.com/gameDetailIos?gameId=12475",
          "imagem": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSPlVsMXAaZ130eBumGDhW3NVDNn5-LTJx-mqtT5ha3ww&s=10"}
     ]
@@ -75,6 +75,14 @@ def get_config():
         return CONFIG_PADRAO
     for k, v in CONFIG_PADRAO.items():
         if k not in cfg: cfg[k] = v
+
+    # MIGRAÇÃO: força atualizar os jogos se a versão antiga estiver salva
+    versao_atual = cfg.get("_versao_jogos", 0)
+    if versao_atual < 2:
+        cfg["jogos"] = CONFIG_PADRAO["jogos"]
+        cfg["_versao_jogos"] = 2
+        salvar_json(CONFIG_FILE, cfg)
+
     return cfg
 
 
